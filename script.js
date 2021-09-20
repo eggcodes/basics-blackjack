@@ -1,27 +1,20 @@
 // HELPER FUNCTIONS
 // make deck
 var makeDeck = function () {
-  // Initialise an empty cardDeck array
   var cardDeck = [];
-  // Initialise an array of the 4 suits in our deck. We will loop over this array.
   var suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
   var names = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King"];
   var values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-  // Loop over the suits array
+
   for (var suitIndex = 0; suitIndex < suits.length; suitIndex += 1) {
-    // Store the current suit in a variable
     var cardSuit = suits[suitIndex];
-    // Loop over the card values
     for (var i = 0; i < names.length; i += 1) {
       var cardName = names[i];
       var cardValue = values[i];
-      // Create a new card with the current name, suit and value
       var card = makeCard(cardName, cardSuit, cardValue);
-      // Add the new card to the deck
       cardDeck.push(card);
     }
   }
-  // Return the completed card deck array
   return cardDeck;
 };
 // make a card object
@@ -33,6 +26,7 @@ var makeCard = function (cardName, cardSuit, cardValue) {
   };
   return cardObj;
 };
+
 // shuffle deck
 // get a random index ranging from 0 (inclusive) to max (exclusive)
 var getRandomIndex = function (max) {
@@ -50,51 +44,46 @@ var shuffleCards = function (cardDeck) {
   return shuffledDeck;
 };
 
-// player has blackjack CLEAN THIS UP LATER
-var checkPlayerBJ = function () {
-  if (
-    (playerCards[0].value == 1 &&
-      (playerCards[1].value == 1 || playerCards[1].value == 10)) ||
-    (playerCards[1].value == 1 &&
-      (playerCards[0].value == 1 || playerCards[0].value == 10))
-  ) {
-    return true;
+// start game: deal 2 cards to player and dealer
+var startGame = function () {
+  playerCards.push(shuffledDeck.pop());
+  dealerCards.push(shuffledDeck.pop());
+  playerCards.push(shuffledDeck.pop());
+  dealerCards.push(shuffledDeck.pop());
+};
+
+// check if there's an ace in cards
+var checkAce = function (cardsArray) {
+  aceInHand = cardsArray.some((card) => card.name == "Ace");
+  return aceInHand; // true
+};
+
+// calculate total value of cards
+var calcTotalValue = function (cardsArray) {
+  var totalValue = cardsArray.reduce((a, b) => a + b.value, 0);
+  // as long as there's 1 ace, count it as 11
+  if (checkAce(cardsArray)) {
+    totalValue += 10;
   } else {
-    return false;
+    return totalValue;
   }
+  return totalValue;
 };
 
-// dealer has blackjack CLEAN THIS UP LATER
-var checkDealerBJ = function () {
-  if (
-    (dealerCards[0].value == 1 &&
-      (dealerCards[1].value == 1 || dealerCards[1].value == 10)) ||
-    (dealerCards[1].value == 1 &&
-      (dealerCards[0].value == 1 || dealerCards[0].value == 10))
-  ) {
+// check if blackjack
+var checkBJ = function (cardsArray) {
+  if (calcTotalValue(cardsArray) == 21) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
-// player total value
-var calcPlayerTotalValue = function () {
-  var playerTotalValue = 0;
-  for (var j = 0; j < playerCards.length; j += 1) {
-    playerTotalValue += playerCards[j].value;
-  }
-
-  return playerTotalValue;
-};
-
-// dealer total value
-var calcDealerTotalValue = function () {
-  var dealerTotalValue = 0;
-  for (var k = 0; k < dealerCards.length; k += 1) {
-    dealerTotalValue += dealerCards[k].value;
-  }
-  return dealerTotalValue;
+// reset gane state
+var resetGameState = function () {
+  playerCards = [];
+  dealerCards = [];
+  gameState = "waiting to deal";
+  shuffledDeck = shuffleCards(makeDeck());
 };
 
 // GLOBAL VARIABLES
@@ -105,36 +94,36 @@ var shuffledDeck = shuffleCards(makeDeck());
 
 // MAIN FUNCTION
 var main = function (input) {
-  // deals cards
+  // deals cards to both players and dealers
   if (gameState == "waiting to deal") {
-    playerCards.push(shuffledDeck.pop());
-    dealerCards.push(shuffledDeck.pop());
-    playerCards.push(shuffledDeck.pop());
-    dealerCards.push(shuffledDeck.pop());
+    // deal 2 cards to both player and dealer
+    startGame();
 
     // check if player or dealer has blackjack
-    if (checkPlayerBJ() && checkDealerBJ()) {
+    if (checkBJ(playerCards) && checkBJ(dealerCards)) {
       var myOutputValue = `wow, you guys both got Black Jack!`;
+      return myOutputValue;
     }
-    if (checkPlayerBJ() && !checkDealerBJ()) {
+    if (checkBJ(playerCards) && !checkBJ(dealerCards)) {
       myOutputValue = `you win, you've got Black Jack! <br><br>
         you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
       return myOutputValue;
     }
-    if (!checkPlayerBJ() && checkDealerBJ()) {
+    if (!checkBJ(playerCards) && checkBJ(dealerCards)) {
       myOutputValue = `you lose, dealer has Black Jack. <br><br>
         you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
       return myOutputValue;
-    } else {
-      gameState = "player move";
-      var playerTotalValue = calcPlayerTotalValue();
-      myOutputValue = `you drew <br>
+    }
+
+    gameState = "player move";
+    var playerTotalValue = calcTotalValue(playerCards);
+    myOutputValue = `you drew <br>
       ${playerCards[0].name} of ${playerCards[0].suit}<br>
       ${playerCards[1].name} of ${playerCards[1].suit}<br><br>
       
       your total value is ${playerTotalValue}`;
-      return myOutputValue;
-    }
+
+    return myOutputValue;
   }
 
   // player decides to "hit" or "stand"
@@ -146,7 +135,7 @@ var main = function (input) {
     if (input == "hit") {
       // deal player another card
       playerCards.push(shuffledDeck.pop());
-      playerTotalValue = calcPlayerTotalValue();
+      playerTotalValue = calcTotalValue(playerCards);
 
       // output every new card drawn
       for (var l = 2; l < playerCards.length; l += 1) {
@@ -155,25 +144,25 @@ var main = function (input) {
       myOutputValue += `<br> your total value is ${playerTotalValue} <br>`;
 
       // check if player goes bust
-      if (calcPlayerTotalValue() > 21) {
-        myOutputValue += `you lose!`;
-        // NEED A RESET GAME STATE FUNCTION HERE
+      if (calcTotalValue(playerCards) > 21) {
+        myOutputValue += `you lose! play again?`;
+        resetGameState();
       }
       return myOutputValue;
     }
 
     if (input == "stand") {
-      playerTotalValue = calcPlayerTotalValue();
+      playerTotalValue = calcTotalValue(playerCards);
       myOutputValue = `you drew <br>`;
       for (var m = 0; m < playerCards.length; m += 1) {
         myOutputValue += `${playerCards[m].name} of ${playerCards[m].suit}<br>`;
       }
       myOutputValue += `<br> your total value is ${playerTotalValue} <br><br>`;
       gameState = "dealer move";
-      var dealerTotalValue = calcDealerTotalValue();
+      var dealerTotalValue = calcTotalValue(dealerCards);
       while (dealerTotalValue < 17) {
         dealerCards.push(shuffledDeck.pop());
-        dealerTotalValue = calcDealerTotalValue();
+        dealerTotalValue = calcTotalValue(dealerCards);
       }
       myOutputValue += `dealer's turn. <br>
       type "reveal" to view dealer's hand.`;
@@ -184,7 +173,7 @@ var main = function (input) {
   }
 
   if (gameState == "dealer move") {
-    playerTotalValue = calcPlayerTotalValue();
+    playerTotalValue = calcTotalValue(playerCards);
     myOutputValue = `you drew <br>`;
     for (var n = 0; n < playerCards.length; n += 1) {
       myOutputValue += `${playerCards[n].name} of ${playerCards[n].suit}<br>`;
@@ -192,7 +181,7 @@ var main = function (input) {
     myOutputValue += `<br> your total value is ${playerTotalValue} <br><br>`;
 
     if (input == "reveal") {
-      dealerTotalValue = calcDealerTotalValue();
+      dealerTotalValue = calcTotalValue(dealerCards);
       myOutputValue += `dealer drew <br>`;
       for (var o = 0; o < dealerCards.length; o += 1) {
         myOutputValue += `${dealerCards[o].name} of ${dealerCards[o].suit}<br>`;
@@ -207,6 +196,7 @@ var main = function (input) {
     } else if (dealerTotalValue > playerTotalValue) {
       myOutputValue += `you lose.`;
     }
+    resetGameState();
     return myOutputValue;
   }
 
