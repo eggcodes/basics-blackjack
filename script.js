@@ -90,7 +90,7 @@ var resetGameState = function () {
 // generate player output msg
 var generatePlayerOutputMsg = function () {
   var playerTotalValue = calcTotalValue(playerCards);
-  var PLAYER_OUTPUT_MSG = `Your Hand<br>`;
+  var PLAYER_OUTPUT_MSG = `<u>YOUR HAND</u><br>`;
   for (var i = 0; i < playerCards.length; i += 1) {
     PLAYER_OUTPUT_MSG += `${playerCards[i].name} of ${playerCards[i].suit}<br>`;
   }
@@ -101,7 +101,7 @@ var generatePlayerOutputMsg = function () {
 // generate dealer output msg
 var generateDealerOutputMsg = function () {
   var dealerTotalValue = calcTotalValue(dealerCards);
-  var DEALER_OUTPUT_MSG = `Dealer's Hand<br>`;
+  var DEALER_OUTPUT_MSG = `<u>DEALER'S HAND</u><br>`;
   for (var i = 0; i < dealerCards.length; i += 1) {
     DEALER_OUTPUT_MSG += `${dealerCards[i].name} of ${dealerCards[i].suit}<br>`;
   }
@@ -149,7 +149,9 @@ var main = function (input) {
     }
 
     gameState = "player move";
-    myOutputValue = generatePlayerOutputMsg();
+    myOutputValue =
+      generatePlayerOutputMsg() +
+      `Please enter "hit" to deal another card or "stand" to pass.`;
     return myOutputValue;
   }
 
@@ -194,9 +196,9 @@ var main = function (input) {
     if (dealerTotalValue > 21 || dealerTotalValue < playerTotalValue) {
       myOutputValue += `<hr><br><b>You win! Play again?</b>`;
     } else if (dealerTotalValue == playerTotalValue) {
-      myOutputValue += `<hr><br><b>It's a tie.Play Again?</b>`;
+      myOutputValue += `<hr><br><b>It's a tie. Play Again?</b>`;
     } else if (dealerTotalValue > playerTotalValue) {
-      myOutputValue += `<hr><br><b>You lose.Play Again?</b>`;
+      myOutputValue += `<hr><br><b>You lose. Play Again?</b>`;
     }
     resetGameState();
     return myOutputValue;
