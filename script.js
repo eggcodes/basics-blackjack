@@ -60,9 +60,12 @@ var checkAce = function (cardsArray) {
 // calculate total value of cards
 var calcTotalValue = function (cardsArray) {
   var totalValue = cardsArray.reduce((a, b) => a + b.value, 0);
-  // as long as there's 1 ace, count it as 11
+  // if there is an ace and the total value does not exceed 21, count it as 11
   if (checkAce(cardsArray)) {
     totalValue += 10;
+  }
+  if (checkAce(cardsArray) && totalValue > 21) {
+    totalValue -= 10;
   }
   return totalValue;
 };
