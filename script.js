@@ -86,6 +86,28 @@ var resetGameState = function () {
   shuffledDeck = shuffleCards(makeDeck());
 };
 
+// generate player output msg
+var generatePlayerOutputMsg = function () {
+  var playerTotalValue = calcTotalValue(playerCards);
+  var PLAYER_OUTPUT_MSG = `Your Hand<br>`;
+  for (var i = 0; i < playerCards.length; i += 1) {
+    PLAYER_OUTPUT_MSG += `${playerCards[i].name} of ${playerCards[i].suit}<br>`;
+  }
+  PLAYER_OUTPUT_MSG += `<b>Your hand totals to ${playerTotalValue}.</b><br><br>`;
+  return PLAYER_OUTPUT_MSG;
+};
+
+// generate dealer output msg
+var generateDealerOutputMsg = function () {
+  var dealerTotalValue = calcTotalValue(dealerCards);
+  var DEALER_OUTPUT_MSG = `Dealer's Hand<br>`;
+  for (var i = 0; i < dealerCards.length; i += 1) {
+    DEALER_OUTPUT_MSG += `${dealerCards[i].name} of ${dealerCards[i].suit}<br>`;
+  }
+  DEALER_OUTPUT_MSG += `<b> Dealer's hand totals to ${dealerTotalValue}.</b><br><br>`;
+  return DEALER_OUTPUT_MSG;
+};
+
 // GLOBAL VARIABLES
 var playerCards = [];
 var dealerCards = [];
@@ -101,103 +123,79 @@ var main = function (input) {
 
     // check if player or dealer has blackjack
     if (checkBJ(playerCards) && checkBJ(dealerCards)) {
-      var myOutputValue = `wow, you guys both got Black Jack!`;
+      var myOutputValue =
+        generatePlayerOutputMsg() +
+        generateDealerOutputMsg() +
+        `<hr><br><b>Wow, you guys both got Black Jack!</b>`;
       resetGameState();
       return myOutputValue;
     }
     if (checkBJ(playerCards) && !checkBJ(dealerCards)) {
-      myOutputValue = `you win, you've got Black Jack! <br><br>
-        you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
+      myOutputValue =
+        generatePlayerOutputMsg() +
+        generateDealerOutputMsg() +
+        `<hr><br><b> You win, you've got Black Jack!</b>`;
       resetGameState();
       return myOutputValue;
     }
     if (!checkBJ(playerCards) && checkBJ(dealerCards)) {
-      myOutputValue = `you lose, dealer has Black Jack. <br><br>
-        you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
+      myOutputValue =
+        generatePlayerOutputMsg() +
+        generateDealerOutputMsg() +
+        `<hr><br><b> You lose, Dealer has Black Jack.</b>`;
       resetGameState();
       return myOutputValue;
     }
 
     gameState = "player move";
-    var playerTotalValue = calcTotalValue(playerCards);
-    myOutputValue = `you drew <br>
-      ${playerCards[0].name} of ${playerCards[0].suit}<br>
-      ${playerCards[1].name} of ${playerCards[1].suit}<br><br>
-      
-      your total value is ${playerTotalValue}`;
-
+    myOutputValue = generatePlayerOutputMsg();
     return myOutputValue;
   }
 
   // player decides to "hit" or "stand"
   if (gameState == "player move") {
-    myOutputValue = `you drew <br>
-    ${playerCards[0].name} of ${playerCards[0].suit}<br>
-    ${playerCards[1].name} of ${playerCards[1].suit}<br>`;
-
     if (input == "hit") {
       // deal player another card
       playerCards.push(shuffledDeck.pop());
-      playerTotalValue = calcTotalValue(playerCards);
-
-      // output every new card drawn
-      for (var l = 2; l < playerCards.length; l += 1) {
-        myOutputValue += `${playerCards[l].name} of ${playerCards[l].suit}<br>`;
-      }
-      myOutputValue += `<br> your total value is ${playerTotalValue} <br>`;
+      myOutputValue = generatePlayerOutputMsg();
 
       // check if player goes bust
       if (calcTotalValue(playerCards) > 21) {
-        myOutputValue += `you lose! play again?`;
+        myOutputValue += `<hr><br><b> You lose! Play again?</b>`;
         resetGameState();
       }
       return myOutputValue;
     }
-
     if (input == "stand") {
-      playerTotalValue = calcTotalValue(playerCards);
-      myOutputValue = `you drew <br>`;
-      for (var m = 0; m < playerCards.length; m += 1) {
-        myOutputValue += `${playerCards[m].name} of ${playerCards[m].suit}<br>`;
-      }
-      myOutputValue += `<br> your total value is ${playerTotalValue} <br><br>`;
+      myOutputValue = generatePlayerOutputMsg();
+
       gameState = "dealer move";
-      var dealerTotalValue = calcTotalValue(dealerCards);
-      while (dealerTotalValue < 17) {
+      while (calcTotalValue(dealerCards) < 17) {
         dealerCards.push(shuffledDeck.pop());
-        dealerTotalValue = calcTotalValue(dealerCards);
       }
-      myOutputValue += `dealer's turn. <br>
-      type "reveal" to view dealer's hand.`;
+      myOutputValue += `It's the Dealer's turn. <br>
+      Type "reveal" to view dealer's hand.`;
     } else {
-      myOutputValue = `please enter "hit" to deal another card or "stand" to pass.`;
+      myOutputValue =
+        generatePlayerOutputMsg() +
+        `Please enter "hit" to deal another card or "stand" to pass.`;
     }
     return myOutputValue;
   }
 
   if (gameState == "dealer move") {
-    playerTotalValue = calcTotalValue(playerCards);
-    myOutputValue = `you drew <br>`;
-    for (var n = 0; n < playerCards.length; n += 1) {
-      myOutputValue += `${playerCards[n].name} of ${playerCards[n].suit}<br>`;
-    }
-    myOutputValue += `<br> your total value is ${playerTotalValue} <br><br>`;
-
     if (input == "reveal") {
-      dealerTotalValue = calcTotalValue(dealerCards);
-      myOutputValue += `dealer drew <br>`;
-      for (var o = 0; o < dealerCards.length; o += 1) {
-        myOutputValue += `${dealerCards[o].name} of ${dealerCards[o].suit}<br>`;
-      }
-      myOutputValue += `<br> dealer's total value is ${dealerTotalValue} <br><br>`;
+      myOutputValue = generatePlayerOutputMsg() + generateDealerOutputMsg();
+      var dealerTotalValue = calcTotalValue(dealerCards);
+      var playerTotalValue = calcTotalValue(playerCards);
     }
     // check if dealer goes bust
     if (dealerTotalValue > 21 || dealerTotalValue < playerTotalValue) {
-      myOutputValue += `you win!`;
+      myOutputValue += `<hr><br><b>You win! Play again?</b>`;
     } else if (dealerTotalValue == playerTotalValue) {
-      myOutputValue += `it's a tie.`;
+      myOutputValue += `<hr><br><b>It's a tie.Play Again?</b>`;
     } else if (dealerTotalValue > playerTotalValue) {
-      myOutputValue += `you lose.`;
+      myOutputValue += `<hr><br><b>You lose.Play Again?</b>`;
     }
     resetGameState();
     return myOutputValue;
@@ -207,9 +205,6 @@ var main = function (input) {
 };
 
 /* 
-refactor:
-- making output messages modular/better
-
 bonus:
 - nicer ui
 */
