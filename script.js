@@ -54,18 +54,15 @@ var startGame = function () {
 
 // check if there's an ace in cards
 var checkAce = function (cardsArray) {
-  aceInHand = cardsArray.some((card) => card.name == "Ace");
+  var aceInHand = cardsArray.some((card) => card.name == "Ace");
   return aceInHand; // true
 };
-
 // calculate total value of cards
 var calcTotalValue = function (cardsArray) {
   var totalValue = cardsArray.reduce((a, b) => a + b.value, 0);
   // as long as there's 1 ace, count it as 11
   if (checkAce(cardsArray)) {
     totalValue += 10;
-  } else {
-    return totalValue;
   }
   return totalValue;
 };
@@ -188,11 +185,11 @@ var main = function (input) {
       }
       myOutputValue += `<br> dealer's total value is ${dealerTotalValue} <br><br>`;
     }
-    // check if dealer goes
+    // check if dealer goes bust
     if (dealerTotalValue > 21 || dealerTotalValue < playerTotalValue) {
       myOutputValue += `you win!`;
     } else if (dealerTotalValue == playerTotalValue) {
-      myOutputValue += `you drew.`;
+      myOutputValue += `it's a tie.`;
     } else if (dealerTotalValue > playerTotalValue) {
       myOutputValue += `you lose.`;
     }
@@ -203,23 +200,9 @@ var main = function (input) {
   return myOutputValue;
 };
 
-// There will be only two players. One human and one computer.
-// The computer will always be the dealer. The dealer has to hit if their hand is below 17.
-// The player who is closer to 21 wins the hand. Aces can be 1 or 11.
-
-// Deck is shuffled.
-// User clicks Submit to deal cards.
-// The cards are analysed for game winning conditions, e.g. Blackjack.
-// The cards are displayed to the user.
-// The user decides whether to hit or stand, using the submit button to submit their choice.
-// The user's cards are analysed for winning or losing conditions.
-// The computer decides to hit or stand automatically based on game rules.
-// The game either ends or continues.
-
 /* 
 refactor:
 - making output messages modular/better
-- variable ace value
 - reset game state
 
 bonus:
