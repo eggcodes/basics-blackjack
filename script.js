@@ -57,6 +57,7 @@ var checkAce = function (cardsArray) {
   var aceInHand = cardsArray.some((card) => card.name == "Ace");
   return aceInHand; // true
 };
+
 // calculate total value of cards
 var calcTotalValue = function (cardsArray) {
   var totalValue = cardsArray.reduce((a, b) => a + b.value, 0);
