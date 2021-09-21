@@ -99,16 +99,19 @@ var main = function (input) {
     // check if player or dealer has blackjack
     if (checkBJ(playerCards) && checkBJ(dealerCards)) {
       var myOutputValue = `wow, you guys both got Black Jack!`;
+      resetGameState();
       return myOutputValue;
     }
     if (checkBJ(playerCards) && !checkBJ(dealerCards)) {
       myOutputValue = `you win, you've got Black Jack! <br><br>
         you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
+      resetGameState();
       return myOutputValue;
     }
     if (!checkBJ(playerCards) && checkBJ(dealerCards)) {
       myOutputValue = `you lose, dealer has Black Jack. <br><br>
         you drew ${playerCards[0].name} of ${playerCards[0].suit} and ${playerCards[1].name} of ${playerCards[1].suit}.`;
+      resetGameState();
       return myOutputValue;
     }
 
@@ -203,7 +206,6 @@ var main = function (input) {
 /* 
 refactor:
 - making output messages modular/better
-- reset game state
 
 bonus:
 - nicer ui
