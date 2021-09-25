@@ -116,6 +116,7 @@
       }
 
       #container {
+        text-align: center;
         background-color: #203542;
         margin: 40px auto;
         max-width: 800px;
@@ -181,11 +182,14 @@
     <hr />
     <h1 class="header">♣️ Basics - Blackjack ♠️</h1>
     <div id="container">
-      <p>Input:</p>
-      <input id="input-field" />
+      <p>Welcome, hit "Deal" to start the game!</p>
+      <!-- <p>Input:</p>
+      <input id="input-field" /> -->
       <br />
-      <button id="submit-button">Submit</button>
-      <p>Output:</p>
+      <button id="submit-button">Deal</button>
+      <button id="hit-button">Hit</button>
+      <button id="stand-button">Stand</button>
+      <button id="reveal-button">Reveal</button>
       <div id="output-div"></div>
     </div>
     <!-- Import program logic -->
@@ -193,17 +197,42 @@
     <!-- Define button click functionality -->
     <script>
       var button = document.querySelector("#submit-button");
+      var hitButton = document.querySelector("#hit-button");
+      var standButton = document.querySelector("#stand-button");
+      var revealButton = document.querySelector("#reveal-button");
+
       button.addEventListener("click", function () {
         // Set result to input value
-        var input = document.querySelector("#input-field");
-        var result = main(input.value);
+        // var input = document.querySelector("#input-field");
+        var result = main();
 
         // Display result in output element
         var output = document.querySelector("#output-div");
         output.innerHTML = result;
 
-        // Reset input value
-        input.value = "";
+        // // Reset input value
+        // input.value = "";
+      });
+
+      hitButton.addEventListener("click", function () {
+        playerHit(playerCards);
+        var result = main();
+        var output = document.querySelector("#output-div");
+        output.innerHTML = result;
+      });
+
+      standButton.addEventListener("click", function () {
+        playerStand();
+        var result = main();
+        var output = document.querySelector("#output-div");
+        output.innerHTML = result;
+      });
+
+      revealButton.addEventListener("click", function () {
+        revealDealerHand();
+        var result = main();
+        var output = document.querySelector("#output-div");
+        output.innerHTML = result;
       });
     </script>
   </body>

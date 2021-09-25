@@ -1,3 +1,7 @@
+document.querySelector("#hit-button").disabled = true;
+document.querySelector("#stand-button").disabled = true;
+document.querySelector("#reveal-button").disabled = true;
+
 // HELPER FUNCTIONS
 // make deck
 var makeDeck = function () {
@@ -50,6 +54,9 @@ var startGame = function () {
   dealerCards.push(shuffledDeck.pop());
   playerCards.push(shuffledDeck.pop());
   dealerCards.push(shuffledDeck.pop());
+  document.querySelector("#submit-button").disabled = true;
+  document.querySelector("#hit-button").disabled = false;
+  document.querySelector("#stand-button").disabled = false;
 };
 
 // check if there's an ace in cards
@@ -85,6 +92,30 @@ var resetGameState = function () {
   dealerCards = [];
   gameState = "waiting to deal";
   shuffledDeck = shuffleCards(makeDeck());
+  document.querySelector("#submit-button").disabled = false;
+  document.querySelector("#hit-button").disabled = true;
+  document.querySelector("#stand-button").disabled = true;
+  document.querySelector("#reveal-button").disabled = true;
+};
+
+// player clicks on "hit"
+var playerHit = function (playerCards) {
+  gameState = "player hit";
+  // deal player another card
+  playerCards.push(shuffledDeck.pop());
+};
+
+// player clicks on "stand"
+var playerStand = function () {
+  gameState = "player stand";
+  document.querySelector("#hit-button").disabled = true;
+  document.querySelector("#stand-button").disabled = true;
+  document.querySelector("#reveal-button").disabled = false;
+};
+
+// player clicks on "reveal"
+var revealDealerHand = function () {
+  gameState = "reveal dealer hand";
 };
 
 // generate player output msg
@@ -116,7 +147,7 @@ var gameState = "waiting to deal";
 var shuffledDeck = shuffleCards(makeDeck());
 
 // MAIN FUNCTION
-var main = function (input) {
+var main = function () {
   // deals cards to both players and dealers
   if (gameState == "waiting to deal") {
     // deal 2 cards to both player and dealer
@@ -127,7 +158,7 @@ var main = function (input) {
       var myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b>Wow, you guys both got Black Jack!</b>`;
+        `<hr><br><b>Wow, you guys both got Black Jack! ♠️</b>`;
       resetGameState();
       return myOutputValue;
     }
@@ -135,7 +166,7 @@ var main = function (input) {
       myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b> You win, you've got Black Jack!</b>`;
+        `<hr><br><b> You win, you've got Black Jack! ♠️</b>`;
       resetGameState();
       return myOutputValue;
     }
@@ -143,7 +174,7 @@ var main = function (input) {
       myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b> You lose, Dealer has Black Jack.</b>`;
+        `<hr><br><b> You lose, Dealer has Black Jack. ♠️</b>`;
       resetGameState();
       return myOutputValue;
     }
@@ -151,47 +182,39 @@ var main = function (input) {
     gameState = "player move";
     myOutputValue =
       generatePlayerOutputMsg() +
-      `Please enter "hit" to deal another card or "stand" to pass.`;
+      `Click "hit" to deal another card or "stand" to pass.`;
     return myOutputValue;
   }
 
   // player decides to "hit" or "stand"
-  if (gameState == "player move") {
-    if (input == "hit") {
-      // deal player another card
-      playerCards.push(shuffledDeck.pop());
-      myOutputValue = generatePlayerOutputMsg();
+  if (gameState == "player hit") {
+    myOutputValue = generatePlayerOutputMsg();
 
-      // check if player goes bust
-      if (calcTotalValue(playerCards) > 21) {
-        myOutputValue += `<hr><br><b> You lose! Play again?</b>`;
-        resetGameState();
-      }
-      return myOutputValue;
-    }
-    if (input == "stand") {
-      myOutputValue = generatePlayerOutputMsg();
-
-      gameState = "dealer move";
-      while (calcTotalValue(dealerCards) < 17) {
-        dealerCards.push(shuffledDeck.pop());
-      }
-      myOutputValue += `It's the Dealer's turn. <br>
-      Type "reveal" to view dealer's hand.`;
-    } else {
-      myOutputValue =
-        generatePlayerOutputMsg() +
-        `Please enter "hit" to deal another card or "stand" to pass.`;
+    // check if player goes bust
+    if (calcTotalValue(playerCards) > 21) {
+      myOutputValue += `<hr><br><b> You lose! Play again?</b>`;
+      resetGameState();
     }
     return myOutputValue;
   }
 
-  if (gameState == "dealer move") {
-    if (input == "reveal") {
-      myOutputValue = generatePlayerOutputMsg() + generateDealerOutputMsg();
-      var dealerTotalValue = calcTotalValue(dealerCards);
-      var playerTotalValue = calcTotalValue(playerCards);
+  if (gameState == "player stand") {
+    myOutputValue =
+      generatePlayerOutputMsg() +
+      `It's the Dealer's turn. <br>
+      Click "reveal" to view dealer's hand.`;
+
+    gameState = "dealer move";
+    while (calcTotalValue(dealerCards) < 17) {
+      dealerCards.push(shuffledDeck.pop());
     }
+    return myOutputValue;
+  }
+
+  if (gameState == "reveal dealer hand") {
+    myOutputValue = generatePlayerOutputMsg() + generateDealerOutputMsg();
+    var dealerTotalValue = calcTotalValue(dealerCards);
+    var playerTotalValue = calcTotalValue(playerCards);
     // check if dealer goes bust
     if (dealerTotalValue > 21 || dealerTotalValue < playerTotalValue) {
       myOutputValue += `<hr><br><b>You win! Play again?</b>`;
@@ -203,11 +226,10 @@ var main = function (input) {
     resetGameState();
     return myOutputValue;
   }
-
-  return myOutputValue;
 };
 
 /* 
 bonus:
 - nicer ui
+- multiplayer
 */
