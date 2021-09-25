@@ -155,54 +155,79 @@ var main = function () {
 
     // check if player or dealer has blackjack
     if (checkBJ(playerCards) && checkBJ(dealerCards)) {
+      var myImage =
+        '<img src="https://c.tenor.com/Jft_4K8MU2IAAAAC/soso-notbad.gif"/ class = "center">';
       var myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b>Wow, you guys both got Black Jack! ♠️</b>`;
+        `<hr><br><b>Wow, you guys both got Black Jack! ♠️</b><br><br>` +
+        myImage;
       resetGameState();
       return myOutputValue;
     }
     if (checkBJ(playerCards) && !checkBJ(dealerCards)) {
+      myImage =
+        '<img src="https://c.tenor.com/1DVVF2Ew9scAAAAC/boss-gatsby.gif"/ class = "center">';
       myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b> You win, you've got Black Jack! ♠️</b>`;
+        `<hr><br><b> You win, you've got Black Jack! ♠️</b><br><br>` +
+        myImage;
       resetGameState();
       return myOutputValue;
     }
     if (!checkBJ(playerCards) && checkBJ(dealerCards)) {
+      myImage =
+        '<img src="https://c.tenor.com/SLT0MF-wqRgAAAAC/laughing-leonardo-dicaprio.gif"/ class = "center">';
       myOutputValue =
         generatePlayerOutputMsg() +
         generateDealerOutputMsg() +
-        `<hr><br><b> You lose, Dealer has Black Jack. ♠️</b>`;
+        `<hr><br><b> You lose, Dealer has Black Jack. ♠️</b><br><br>` +
+        myImage;
       resetGameState();
       return myOutputValue;
     }
 
     gameState = "player move";
+    myImage =
+      '<img src="https://c.tenor.com/in7Ivne8JhsAAAAC/oh-yeah-baby-agreed.gif"/ class = "center">';
     myOutputValue =
       generatePlayerOutputMsg() +
-      `Click "hit" to deal another card or "stand" to pass.`;
+      `Click "hit" to deal another card or "stand" to pass.<br><br>` +
+      myImage;
     return myOutputValue;
   }
 
   // player decides to "hit" or "stand"
   if (gameState == "player hit") {
-    myOutputValue = generatePlayerOutputMsg();
+    myImage =
+      '<img src="https://c.tenor.com/in7Ivne8JhsAAAAC/oh-yeah-baby-agreed.gif"/ class = "center">';
+    myOutputValue =
+      generatePlayerOutputMsg() +
+      `Click "hit" to deal another card or "stand" to pass.<br><br>` +
+      myImage;
 
     // check if player goes bust
     if (calcTotalValue(playerCards) > 21) {
-      myOutputValue += `<hr><br><b> You lose! Play again?</b>`;
+      myImage =
+        '<img src="https://c.tenor.com/DhEQMPO1IzsAAAAC/leo-dicaprio-wolf-of-wallstreet.gif"/ class = "center">';
+      myOutputValue =
+        generatePlayerOutputMsg() +
+        `<hr><br><b> You lose! Play again?</b><br><br>` +
+        myImage;
       resetGameState();
     }
     return myOutputValue;
   }
 
   if (gameState == "player stand") {
+    myImage =
+      '<img src="https://c.tenor.com/Jft_4K8MU2IAAAAC/soso-notbad.gif"/ class = "center">';
     myOutputValue =
       generatePlayerOutputMsg() +
       `It's the Dealer's turn. <br>
-      Click "reveal" to view dealer's hand.`;
+      Click "reveal" to view dealer's hand.<br><br>` +
+      myImage;
 
     gameState = "dealer move";
     while (calcTotalValue(dealerCards) < 17) {
@@ -217,11 +242,19 @@ var main = function () {
     var playerTotalValue = calcTotalValue(playerCards);
     // check if dealer goes bust
     if (dealerTotalValue > 21 || dealerTotalValue < playerTotalValue) {
-      myOutputValue += `<hr><br><b>You win! Play again?</b>`;
+      myImage =
+        '<img src="https://c.tenor.com/029LgfMnsisAAAAC/applause-leonardo-dicaprio.gif"/ class = "center">';
+
+      myOutputValue += `<hr><br><b>You win! Play again?</b><br><br>` + myImage;
     } else if (dealerTotalValue == playerTotalValue) {
-      myOutputValue += `<hr><br><b>It's a tie. Play Again?</b>`;
+      myImage =
+        '<img src="https://c.tenor.com/oFvfCORxVFcAAAAd/leonardo-dicaprio.gif"/ class = "center">';
+      myOutputValue +=
+        `<hr><br><b>It's a tie. Play Again?</b><br><br>` + myImage;
     } else if (dealerTotalValue > playerTotalValue) {
-      myOutputValue += `<hr><br><b>You lose. Play Again?</b>`;
+      myImage =
+        '<img src="https://c.tenor.com/mSl-6FcyX5IAAAAC/leonardo-leonardo-dicaprio.gif"/ class = "center">';
+      myOutputValue += `<hr><br><b>You lose. Play Again?</b><br><br>` + myImage;
     }
     resetGameState();
     return myOutputValue;

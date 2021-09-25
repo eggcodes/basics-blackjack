@@ -142,6 +142,12 @@
         border-radius: 2px;
       }
 
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
       #output-div {
         background-color: #97b7cb;
         color: black;
@@ -180,9 +186,9 @@
       />
     </h1>
     <hr />
-    <h1 class="header">♣️ Basics - Blackjack ♠️</h1>
+    <h1 class="header">♣️ Play Blackjack with Leo ♠️</h1>
     <div id="container">
-      <p>Welcome, hit "Deal" to start the game!</p>
+      <p id="welcome-msg">Welcome, hit "Deal" to start the game!</p>
       <!-- <p>Input:</p>
       <input id="input-field" /> -->
       <br />
@@ -190,7 +196,12 @@
       <button id="hit-button">Hit</button>
       <button id="stand-button">Stand</button>
       <button id="reveal-button">Reveal</button>
-      <div id="output-div"></div>
+      <div id="output-div">
+        <img
+          src="https://c.tenor.com/xxFSg4CCwmwAAAAC/leonardo-dicaprio-maket-it-rain.gif"
+          class="center"
+        />
+      </div>
     </div>
     <!-- Import program logic -->
     <script src="script.js"></script>
